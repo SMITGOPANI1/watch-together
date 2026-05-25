@@ -32,14 +32,25 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    // Determine target socket host
+    // Determine target socket host using robust URL parsing
     const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-    let rawSocketUrl = import.meta.env.VITE_SOCKET_URL || apiURL.replace('/api/v1', '') || 'http://localhost:5000';
-    if (rawSocketUrl && rawSocketUrl.endsWith('/')) {
-      rawSocketUrl = rawSocketUrl.slice(0, -1);
+    let socketURL = 'http://localhost:5000';
+    try {
+      const parsedUrl = new URL(apiURL);
+      socketURL = `${parsedUrl.protocol}//${parsedUrl.host}`;
+    } catch (e) {
+      console.warn('[SOCKET CLIENT]: Failed to parse API URL, using fallback host.', e);
+      socketURL = import.meta.env.VITE_SOCKET_URL || apiURL.replace('/api/v1', '') || 'http://localhost:5000';
     }
-    const socketURL = rawSocketUrl;
-
+    
+    // Explicit override if VITE_SOCKET_URL is set
+    if (import.meta.env.VITE_SOCKET_URL) {
+      socketURL = import.meta.env.VITE_SOCKET_URL;
+    }
+    if (socketURL && socketURL.endsWith('/')) {
+      socketURL = socketURL.slice(0, -1);
+    }
+ 
     console.log(`[SOCKET CLIENT]: Initializing connection to ${socketURL}`);
 
     // Retrieve active Firebase token or fallback to developer mock token
