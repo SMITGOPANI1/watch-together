@@ -49,3 +49,18 @@ export const updateProfile = catchAsync(async (req, res, next) => {
     data: { user: req.user }
   });
 });
+
+// Update watch time for the active authenticated user
+export const updateWatchTime = catchAsync(async (req, res, next) => {
+  const { hours } = req.body;
+
+  if (hours && typeof hours === 'number') {
+    req.user.hoursWatched = Number((req.user.hoursWatched || 0) + hours);
+    await req.user.save();
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { user: req.user }
+  });
+});

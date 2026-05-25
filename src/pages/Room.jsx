@@ -13,7 +13,7 @@ import { pageVariants } from '../animations/framer';
 import { useSocket } from '../hooks/useSocket';
 import { useAuth } from '../context/AuthContext';
 import { SOCKET_EVENTS } from '../constants/socketEvents';
-import { messageService, roomService } from '../services/apiClient';
+import { messageService, roomService, apiClient } from '../services/apiClient';
 import { loadYouTubeAPI } from '../utils/youtubeLoader';
 
 export const Room = () => {
@@ -467,6 +467,22 @@ export const Room = () => {
 
     return () => clearInterval(driftCorrection);
   }, [participants, activeRoom, currentUser, connected, isSyncing]);
+
+  // 5. Watch Time dynamic database increments (every 30 seconds of active playback)
+  useEffect(() => {
+    if (!localIsPlaying || !connected || !socket) return;
+
+    const watchTimer = setInterval(async () => {
+      try {
+        await apiClient.post('/users/watch-time', { hours: 30 / 3600 });
+        console.log('[WATCH TIME]: Dynamic 30-second watch increment recorded in database! ⚡');
+      } catch (err) {
+        console.error('[WATCH TIME ERROR]: Failed to increment watch time:', err);
+      }
+    }, 30000);
+
+    return () => clearInterval(watchTimer);
+  }, [localIsPlaying, connected, socket]);
 
   // Host Action Handlers
   const currentHostName = participants.find(p => p.isHost || p.role === 'Host')?.name || activeRoom?.hostName || 'Smit Gopani';

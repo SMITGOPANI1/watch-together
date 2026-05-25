@@ -113,26 +113,26 @@ export const Dashboard = () => {
   const statsData = [
     {
       label: "Total Watch Time",
-      value: user ? `${Math.floor(user.hoursWatched || 48.5)}h ${Math.round(((user.hoursWatched || 48.5) % 1) * 60)}m` : "48h 30m",
+      value: user ? `${Math.floor(user.hoursWatched || 0)}h ${Math.round(((user.hoursWatched || 0) % 1) * 60)}m` : "0h 0m",
       change: "+12% this week",
       icon: "Clock"
     },
     {
       label: "Rooms Hosted",
-      value: user ? (user.roomsHosted !== undefined ? user.roomsHosted : 24) : "24",
-      change: "+4 this month",
+      value: user ? (user.roomsHosted !== undefined ? user.roomsHosted : 0).toString() : "0",
+      change: "Created by you",
       icon: "Tv"
     },
     {
       label: "Saved Playlists",
-      value: user ? (user.favoriteRooms?.length || 9) : "9",
-      change: "2 new added",
+      value: playlists.length.toString(),
+      change: `${playlists.length} created`,
       icon: "ListMusic"
     },
     {
       label: "Hive Friends",
-      value: user ? (user.friends?.length || 114) : "114",
-      change: "+8 requests pending",
+      value: user ? (user.friends?.length || 0).toString() : "0",
+      change: "No pending requests",
       icon: "Users"
     }
   ];

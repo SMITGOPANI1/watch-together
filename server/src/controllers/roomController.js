@@ -1,6 +1,7 @@
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/AppError.js';
 import roomManager from '../services/roomManager.js';
+import User from '../models/User.js';
 
 export const getRooms = catchAsync(async (req, res) => {
   const rooms = roomManager.getAllRooms();
@@ -30,6 +31,16 @@ export const createRoom = catchAsync(async (req, res) => {
 
   const resolvedHost = hostName || 'Smit Gopani';
   const newRoom = roomManager.createRoom(name, category, isPrivate, resolvedHost, hostId);
+
+  // Increment roomsHosted in the database for the creator
+  if (hostId) {
+    try {
+      await User.findOneAndUpdate({ firebaseUid: hostId }, { $inc: { roomsHosted: 1 } });
+      console.log(`[DATABASE]: Incremented roomsHosted count for host UID: ${hostId}`);
+    } catch (e) {
+      console.error('[DATABASE ERROR]: Failed to increment roomsHosted count:', e);
+    }
+  }
 
   res.status(201).json({
     status: 'success',

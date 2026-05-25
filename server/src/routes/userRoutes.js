@@ -1,5 +1,5 @@
 import express from 'express';
-import { getProfile, updateProfile } from '../controllers/userController.js';
+import { getProfile, updateProfile, updateWatchTime } from '../controllers/userController.js';
 import { verifyFirebaseToken, requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -10,6 +10,9 @@ router.use(requireAuth);
 
 router.route('/profile')
   .patch(updateProfile);
+
+router.route('/watch-time')
+  .post(updateWatchTime);
 
 router.route('/:id')
   .get(getProfile);

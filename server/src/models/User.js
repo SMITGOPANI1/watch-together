@@ -49,6 +49,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    hoursWatched: {
+      type: Number,
+      default: 0,
+    },
+    roomsHosted: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // Auto handles createdAt and updatedAt
@@ -57,19 +65,21 @@ const userSchema = new mongoose.Schema(
 
 // Virtual for level fields matching client-side mock states
 userSchema.virtual('level').get(function() {
-  return 'Host Pro';
+  const hours = this.hoursWatched || 0;
+  if (hours < 2) return 'Newbie';
+  if (hours < 10) return 'Stream Fan';
+  if (hours < 25) return 'Watch Enthusiast';
+  if (hours < 50) return 'Host Pro';
+  return 'Master Streamer';
 });
 
 userSchema.virtual('levelValue').get(function() {
-  return 78;
-});
-
-userSchema.virtual('hoursWatched').get(function() {
-  return 48.5;
-});
-
-userSchema.virtual('roomsHosted').get(function() {
-  return 24;
+  const hours = this.hoursWatched || 0;
+  if (hours < 2) return Math.round((hours / 2) * 100);
+  if (hours < 10) return Math.round(((hours - 2) / 8) * 100);
+  if (hours < 25) return Math.round(((hours - 10) / 15) * 100);
+  if (hours < 50) return Math.round(((hours - 25) / 25) * 100);
+  return 100;
 });
 
 // Configure virtual to JSON maps
