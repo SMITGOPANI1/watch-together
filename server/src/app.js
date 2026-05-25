@@ -12,6 +12,9 @@ import { AppError } from './utils/AppError.js';
 
 const app = express();
 
+// Enable trust proxy for Render load balancers to correctly identify user IPs
+app.set('trust proxy', 1);
+
 // 1. GLOBAL HIGH-FIDELITY SECURITY HEADERS
 app.use(helmet());
 
