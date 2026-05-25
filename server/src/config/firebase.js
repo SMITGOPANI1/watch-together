@@ -9,11 +9,17 @@ export let isFirebaseConfigured = false;
 
 try {
   if (projectId && clientEmail && privateKey) {
+    let formattedKey = privateKey.trim();
+    if (formattedKey.startsWith('"') && formattedKey.endsWith('"')) {
+      formattedKey = formattedKey.slice(1, -1);
+    }
+    formattedKey = formattedKey.replace(/\\n/g, '\n');
+
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId,
         clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n'),
+        privateKey: formattedKey,
       })
     });
     console.log('[FIREBASE ADMIN]: Initialized successfully with service account certs.');
