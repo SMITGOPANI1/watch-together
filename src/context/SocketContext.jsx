@@ -34,7 +34,11 @@ export const SocketProvider = ({ children }) => {
 
     // Determine target socket host
     const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-    const socketURL = import.meta.env.VITE_SOCKET_URL || apiURL.replace('/api/v1', '') || 'http://localhost:5000';
+    let rawSocketUrl = import.meta.env.VITE_SOCKET_URL || apiURL.replace('/api/v1', '') || 'http://localhost:5000';
+    if (rawSocketUrl && rawSocketUrl.endsWith('/')) {
+      rawSocketUrl = rawSocketUrl.slice(0, -1);
+    }
+    const socketURL = rawSocketUrl;
 
     console.log(`[SOCKET CLIENT]: Initializing connection to ${socketURL}`);
 
