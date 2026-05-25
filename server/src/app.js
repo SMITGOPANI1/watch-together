@@ -18,7 +18,10 @@ app.use(helmet());
 // 2. DYNAMIC CORS LINKAGE (ALLOWS COOKIES & MOCK CLIENT TOKENS)
 app.use(
   cors({
-    origin: config.clientUrl,
+    origin: (origin, callback) => {
+      // Dynamically echo requesting origin to bypass environment mismatches
+      callback(null, true);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

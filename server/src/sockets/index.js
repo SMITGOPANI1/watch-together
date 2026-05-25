@@ -9,7 +9,10 @@ import registerPlaybackHandlers from './playbackHandler.js';
 export const initSocketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: config.clientUrl,
+      origin: (origin, callback) => {
+        // Dynamically allow any origin that connects, secured by Firebase auth
+        callback(null, true);
+      },
       methods: ['GET', 'POST'],
       credentials: true,
     },
