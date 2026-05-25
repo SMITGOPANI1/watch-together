@@ -8,13 +8,18 @@ const __dirname = path.dirname(__filename);
 // Load .env from the server root folder
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+let rawClientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+if (rawClientUrl && rawClientUrl.endsWith('/')) {
+  rawClientUrl = rawClientUrl.slice(0, -1);
+}
+
 const config = {
   port: parseInt(process.env.PORT || '5000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/watchhive',
   jwtSecret: process.env.JWT_SECRET || 'your_fallback_super_jwt_secret_key_watchhive_must_be_long',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl: rawClientUrl,
 };
 
 // Auto validation on startup
