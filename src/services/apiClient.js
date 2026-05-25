@@ -1,5 +1,9 @@
-// Real API client service layer communicating with WatchHive Express server
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+let rawBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+if (rawBaseUrl && !rawBaseUrl.includes('/api/v1')) {
+  // Automatically append /api/v1 if not present in the hosting environment variable
+  rawBaseUrl = rawBaseUrl.endsWith('/') ? `${rawBaseUrl}api/v1` : `${rawBaseUrl}/api/v1`;
+}
+const BASE_URL = rawBaseUrl;
 
 // Reusable fetch wrapper that injects Firebase Auth tokens
 const makeRequest = async (path, options = {}) => {
